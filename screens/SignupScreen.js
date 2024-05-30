@@ -1,18 +1,21 @@
 import React, { useState } from 'react';
+import { Alert } from 'react-native';
 import AuthContent from '../components/Auth/AuthContent';
 import LoadingOverlay from '../components/ui/LoadingOverlay';
-import { signUp } from '../util/auth'; // Mengubah import dan memperbaiki path
+import { register } from '../util/auth'; // Mengubah import dan memperbaiki path
 
-function SignupScreen() {
+function SignupScreen({navigation}) {
   const [isAuthenticating, setIsAuthenticating] = useState(false);
 
-  async function signupHandler(email, password) {
+  async function signupHandler(akun) {
     setIsAuthenticating(true);  
     try {
-      await signUp(email, password); // Menggunakan signUp dari utils/auth
+      await register(akun);
       setIsAuthenticating(false);
+      navigation.replace('Login')
     } catch (error) {
-      console.error('Sign up error', error);
+      Alert.alert('Error','Sign up error');
+      console.error(error)
       setIsAuthenticating(false); // Pastikan untuk menghentikan loading overlay pada kasus error
     }
   }

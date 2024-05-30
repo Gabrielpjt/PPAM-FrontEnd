@@ -1,12 +1,12 @@
-export async function createUser(akun) {
+export async function register(akun) {
   const body = new FormData();
-  body.append('nama', akun.nama);
-  body.append('password', akun.password);
-  body.append('nama_toko', akun.nama_toko);
-  body.append('alamat', akun.alamat);
-  body.append('no_telp', akun.no_telp);
-  body.append('foto', akun.foto);
-
+  body.append('nama', akun.akun.nama);
+  body.append('password', akun.akun.password);
+  body.append('nama_toko', akun.akun.nama_toko);
+  body.append('alamat', akun.akun.alamat);
+  body.append('no_telp', akun.akun.no_telp);
+  body.append('foto', akun.akun.foto);
+  console.log(body)
   const response = await fetch('https://simanis.stei.itb.ac.id/fodex/akun', {
     method: 'PUT',
     body,
@@ -16,10 +16,11 @@ export async function createUser(akun) {
     throw new Error('Failed to create user');
   }
 
-  return await response.json();
+  return
 }
 
 export async function login(akun) {
+  console.log(akun)
   const body = new FormData();
   body.append('nama', akun.nama);
   body.append('password', akun.password);
