@@ -1,0 +1,484 @@
+saya memiliki project aplikasi mobile dengan kedudukan folder berikut
+MyApp
+     /assets
+     /components
+            /Auth
+                 /AuthContent.js
+                 /AuthForm.js
+                 /Input.js
+           /UI
+                 /Button.js
+                 /FlatButton.js
+                 /IconButton.js
+                 /LoadingOverlay.js
+           /constants
+                 /style.js
+           /screens
+                 /LoginScreen.js
+                 /SignupScreen.js
+                 /WelcomeScreen.js
+           /App.js
+dengan isi Auth.js sebagai berikut import React, { useState } from 'react';
+import { Alert, StyleSheet, View } from 'react-native';
+
+import AuthForm from './AuthForm';
+import { Colors } from '../../constants/style';
+
+function AuthContent({ isLogin, onAuthenticate }) {
+
+  const [credentialsInvalid, setCredentialsInvalid] = useState({
+    email: false,
+    password: false,
+    confirmEmail: false,
+    confirmPassword: false,
+  });
+
+  function switchAuthModeHandler() {
+    // Todo
+  }
+
+  function submitHandler(credentials) {
+    let { email, confirmEmail, password, confirmPassword } = credentials;
+
+    email = email.trim();
+    password = password.trim();
+
+    const emailIsValid = email.includes('@');
+    const passwordIsValid = password.length > 6;
+    const emailsAreEqual = email === confirmEmail;
+    const passwordsAreEqual = password === confirmPassword;
+
+    if (
+      !emailIsValid ||
+      !passwordIsValid ||
+      (!isLogin && (!emailsAreEqual || !passwordsAreEqual))
+    ) {
+      Alert.alert('Invalid input', 'Please check your entered credentials.');
+      setCredentialsInvalid({
+        email: !emailIsValid,
+        confirmEmail: !emailIsValid || !emailsAreEqual,
+        password: !passwordIsValid,
+        confirmPassword: !passwordIsValid || !passwordsAreEqual,
+      });
+      return;
+    }
+    onAuthenticate({ email, password });
+  }
+
+  return (
+    <View style={styles.authContent}>
+      <AuthForm
+        isLogin={isLogin}
+        onSubmit={submitHandler}
+        credentialsInvalid={credentialsInvalid}
+      />
+    </View>
+  );
+}
+
+export default AuthContent;
+
+const styles = StyleSheet.create({
+  authContent: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: Colors.primary800,
+  },
+  buttons: {
+    marginTop: 8,
+  },
+});
+dengan AuthForm.js isinya import React, { useState } from 'react';
+import { StyleSheet, View } from 'react-native';
+
+import Button from '../ui/Button';
+import Input from './Input';
+
+function AuthForm ({ isLogin, onSubmit, credentialsIsInvalid = {} }) {
+    const [enteredEmail, setEnteredEmail] = useState('');
+    const [enteredConfirmEmail, setEnteredConfirmedEmail] = useState('');
+    const [enteredPassword, setEnteredPassword] = useState('');
+    const [enteredConfirmPassword, setEnteredConfirmPassword] = useState('');
+
+    const {
+        email: emailsInvalid,
+        confirmEmail: emailsDontMatch,
+        password: passwordIsInvalid,
+        confirmPassword: passwordDontMatch,
+    } = credentialsIsInvalid;
+
+    function updateInputValueHandler(inputType, enteredValue) {
+        switch(inputType) {
+            case 'email':
+                setEnteredEmail(enteredValue);
+                break;
+            case 'confirmEmail':
+                setEnteredConfirmedEmail(enteredValue);
+                break;
+            case 'password':
+                setEnteredPassword(enteredValue);
+                break;
+            case 'confirmPassword':
+                setEnteredConfirmPassword(enteredValue);
+                break;
+            default:
+                break;
+        }
+    }
+
+    function submitHandler() {
+        onSubmit({
+            email: enteredEmail,
+            confirmEmail: enteredConfirmEmail,
+            password: enteredPassword,
+            confirmPassword: enteredConfirmPassword,
+        });
+    }
+
+    return (
+        <View style={styles.form}>
+            <View>
+                <Input 
+                    label="Email Address"
+                    keyboardType="email-address"
+                    onUpdateValue={(value) => updateInputValueHandler('email', value)}
+                    value={enteredEmail}
+                    isInvalid={emailsInvalid} 
+                />
+                {!isLogin && (
+                    <Input
+                        label="Confirm Email Address"
+                        secure={false}
+                        onUpdateValue={(value) => updateInputValueHandler('confirmEmail', value)}
+                        value={enteredConfirmEmail}
+                        isInvalid={emailsDontMatch}
+                    />
+                )}
+                <Input
+                    label="Password"
+                    keyboardType="default"
+                    onUpdateValue={(value) => updateInputValueHandler('password', value)}
+                    value={enteredPassword}
+                    isInvalid={passwordIsInvalid}
+                />
+                {!isLogin && (
+                    <Input
+                        label="Confirm Password"
+                        secure={true}
+                        onUpdateValue={(value) => updateInputValueHandler('confirmPassword', value)}
+                        value={enteredConfirmPassword}
+                        isInvalid={passwordDontMatch}
+                    />
+                )}
+                <View style={styles.button}>
+                    <Button onPress={submitHandler}>
+                        {isLogin ? 'Log In' : 'Sign Up'}
+                    </Button>
+                </View>
+            </View>
+        </View>
+    );
+}
+
+export default AuthForm;
+
+const styles = StyleSheet.create({
+    form: {
+        // Add your form styles here
+    },
+    button: {
+        marginTop: 25,
+    },
+});
+dengan Input.js isinya sebagai berikut import React from 'react';
+import { View, Text, TextInput, StyleSheet } from 'react-native';
+import { Colors } from '../../constants/style';
+
+function Input({
+    label,
+    keyboardType,
+    secure,
+    onUpdateValue,
+    value,
+    isInvalid
+}){
+    return(
+        <View style={styles.inputContainer}>
+            <Text style={[styles.label, isInvalid && styles.labelInvalid]}>
+                {label}
+            </Text>
+            <TextInput 
+                style={[styles.input, isInvalid && styles.inputInvalid]}
+                autoCapitalize="none"
+                keyboardType={keyboardType}
+                secureTextEntry={secure} // menggunakan secureTextEntry bukan secure
+                onChangeText={onUpdateValue}
+                value={value}
+            />
+        </View>
+    )
+}
+
+export default Input;
+
+const styles = StyleSheet.create({
+    inputContainer: {
+        marginVertical: 8,
+    },
+    input: {
+        borderBottomWidth: 1, // Mengubah input menjadi garis
+        paddingVertical: 8,
+        paddingHorizontal: 6,
+        fontSize: 16,
+        fontFamily: 'Poppins-Regular', // Menggunakan font Poppins-Regular
+    },
+    inputInvalid: {
+        borderBottomColor: Colors.error100, // Mengubah warna garis saat input tidak valid
+    },
+    label: {
+        color: "#1c1b1d",
+        fontSize: 20,
+        textAlign: "center", // Mengubah posisi label menjadi di tengah secara horizontal
+        fontFamily: 'Poppins-Regular', // Menggunakan font Poppins-Regular
+    },
+    labelInvalid: {
+        color: Colors.error500, // Mengubah warna label saat input tidak valid
+    },
+});
+dengan Button.js isinya import React from "react";
+import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Colors } from "../../constants/style";
+
+function Button({ children, onPress }) {
+  return (
+    <Pressable
+      style={({ pressed }) => [styles.button, pressed && styles.pressed]}
+      onPress={onPress}
+      android_ripple={{ color: "rgba(255, 255, 255, 0.5)" }}
+    >
+      <View>
+        <Text style={styles.buttonText}>{children}</Text>
+      </View>
+    </Pressable>
+  );
+}
+
+export default Button;
+
+const styles = StyleSheet.create({
+  button: {
+    borderRadius: 25, // Mengatur border radius untuk membuat tombol berbentuk melengkung di kedua sisinya
+    paddingVertical: 12,
+    paddingHorizontal: 125, // Mengubah padding horizontal untuk membuat tombol memanjang ke samping
+    backgroundColor: "#629C97", // Mengubah warna tombol menjadi #629C97
+    elevation: 2,
+    shadowColor: "black",
+    shadowOffset: { width: 1, height: 1 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+  },
+  pressed: {
+    opacity: 0.7,
+  },
+  buttonText: {
+    textAlign: "center",
+    color: "white", // Mengubah warna teks menjadi putih
+    fontSize: 25, // Mengubah ukuran font menjadi 25
+    fontFamily: "Poppins-Regular", // Menggunakan font Poppins-Regular
+  },
+});
+dengan FlattButton.js isinya import { Pressable, StyleSheet, Text, View } from 'react-native';
+
+import { Colors } from '../../constants/style';
+
+function FlatButton({ children, onPress }) {
+  return (
+    <Pressable
+      style={({ pressed }) => [styles.button, pressed && styles.pressed]}
+      onPress={onPress}
+    >
+      <View>
+        <Text style={styles.buttonText}>{children}</Text>
+      </View>
+    </Pressable>
+  );
+}
+
+export default FlatButton;
+
+const styles = StyleSheet.create({
+  button: {
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+  },
+  pressed: {
+    opacity: 0.7,
+  },
+  buttonText: {
+    textAlign: 'center',
+    color: Colors.primary100,
+  },
+}); dengan IconButton.js isinya import { Pressable, StyleSheet } from "react-native";
+import { Ionicons } from '@expo/vector-icons'
+
+function IconButton({icon, color, size, onPress}){
+    return(
+        <Pressable
+            style = {({ pressed }) => [styles.button, pressed && styles.pressed]}
+            onPress = {onPress}
+        >
+            <Ionicons icon = {icon} color = {color} size = {size} /> 
+
+        </Pressable>
+    ); 
+}
+
+export default IconButton;
+
+const styles = StyleSheet.create({
+    button:{
+        margin: 8,
+        borderRadius: 20
+    },
+    pressed: {
+        opacity: 0.7,
+    }
+}) dengan isi LoadingOverlay.js adalah import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+
+function LoadingOverlay({ messages }){
+    return(
+        <View style = {styles.rootCOntainer}>
+            <Text style = {styles.messages}>{messages}</Text>
+            <ActivityIndicator size="large" />
+        </View>
+    );
+}
+
+export default LoadingOverlay;
+
+const styles = StyleSheet.create({
+    rootCOntainer:{
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 32,
+    },
+    messages:{
+        fontSize: 16,
+        MarginBottom: 12,
+    },
+}); dengan isi LoginScrenn.js isinya import AuthContent from '../components/Auth/AuthContent';
+
+function LoginScreen() {
+    return <AuthContent isLogin />;
+}
+
+export default LoginScreen; dengan SignupScreen.js adalah import AuthContent from '../components/Auth/AuthContent';
+
+function SignupScreen() {
+  return <AuthContent />;
+}
+
+export default SignupScreen; dengan WelcomeScreen.js isinya adalah import { StyleSheet, Text, View } from 'react-native';
+
+function WelcomeScreen() {
+  return (
+    <View style={styles.rootContainer}>
+      <Text style={styles.title}>Welcome!</Text>
+      <Text>You authenticated successfully!</Text>
+    </View>
+  );
+}
+
+export default WelcomeScreen;
+
+const styles = StyleSheet.create({
+  rootContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 32,
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 8,
+  },
+}); dengan App.js isinya adalah import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { StatusBar } from 'expo-status-bar';
+import { Image, StyleSheet, TouchableOpacity } from 'react-native';
+
+import LoginScreen from './screens/LoginScreen';
+import SignupScreen from './screens/SignupScreen';
+import WelcomeScreen from './screens/WelcomeScreen';
+
+const Stack = createNativeStackNavigator();
+
+function AuthStack() {
+  return (
+    <Stack.Navigator
+      screenOptions={({ navigation }) => ({
+        headerStyle: { backgroundColor: '#C0D7D5' },
+        headerTintColor: 'white',
+        headerTitleStyle: { fontFamily: 'Poppins-Regular' },
+        headerTitleAlign: 'center', // Center align the header title
+        contentStyle: { backgroundColor: '#000000' },
+        headerLeft: () => (
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Image
+              style={styles.materialSymbolsLightarrowBIcon}
+              source={require('./assets/arrowback.png')}
+            />
+          </TouchableOpacity>
+        ),
+      })}
+    >
+      <Stack.Screen name="Login" component={LoginScreen} />
+      <Stack.Screen name="Signup" component={SignupScreen} />
+    </Stack.Navigator>
+  );
+}
+
+function AuthenticatedStack() {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerStyle: { backgroundColor: '#C0D7D5' },
+        headerTintColor: 'white',
+        headerTitleStyle: { fontFamily: 'Poppins-Regular' },
+        headerTitleAlign: 'center', // Center align the header title
+        contentStyle: { backgroundColor: '#000000' },
+      }}
+    >
+      <Stack.Screen name="Welcome" component={WelcomeScreen} />
+    </Stack.Navigator>
+  );
+}
+
+function Navigation() {
+  return (
+    <NavigationContainer>
+      <AuthStack />
+    </NavigationContainer>
+  );
+}
+
+export default function App() {
+  return (
+    <>
+      <StatusBar style="light" />
+      <Navigation />
+    </>
+  );
+}
+
+const styles = StyleSheet.create({
+  materialSymbolsLightarrowBIcon: {
+    width: 24,
+    height: 24,
+    marginLeft: 16, // Adjust as needed for your design
+  },
+});

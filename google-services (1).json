@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "800631250067",
+    "firebase_url": "https://fodex3-4676b-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "fodex3-4676b",
+    "storage_bucket": "fodex3-4676b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:800631250067:android:8d3683418956b566120166",
+        "android_client_info": {
+          "package_name": "Fodex.google"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBQMcWlIDtzxmPOCGUTqXvkeJtJss4WjR8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
