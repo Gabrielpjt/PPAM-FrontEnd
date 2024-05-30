@@ -1,7 +1,7 @@
 import React , {useContext, useEffect} from 'react';
 import { View, StyleSheet, FlatList, Text, SafeAreaView, StatusBar, Platform } from 'react-native';
 import PackageItem from '../components/ui/PackageItem';
-import HeaderTrack from '../components/ui/HeaderBack'; // Import the HeaderBack component
+import Header from '../components/ui/Header';
 import Navbar from '../components/ui/Navbar'; // Import the Navbar component
 import { PackingsContext } from '../contexts/PackingContext';
 import { useIsFocused } from '@react-navigation/native';
@@ -71,7 +71,7 @@ const TrackScreen = ({ navigation }) => { // Pass navigation as a prop
         barStyle={Platform.OS === 'android' ? 'light-content' : 'dark-content'}
         backgroundColor="#C0D7D5"
       />
-      <HeaderTrack title="Daftar Paket" />
+      <Header title="Daftar Paket" />
       <FlatList
         data={packings}
         keyExtractor={(item, index) => index.toString()}
