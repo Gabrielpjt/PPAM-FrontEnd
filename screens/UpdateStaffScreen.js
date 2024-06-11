@@ -69,7 +69,7 @@ const UpdateStaffScreen = ({ navigation, route }) => {
     body.append('nopol', updatedStaff.nopol);
     body.append('status', updatedStaff.status);
     body.append('no_telp', updatedStaff.no_telp);
-    body.append('foto', imgName);
+    body.append('foto', "607a3276a6cffc1ab62403fe176b9b8d.png");
     body.append('jk', updatedStaff.jk);
     console.log(body);
 

@@ -5,7 +5,7 @@ export async function register(akun) {
   body.append('nama_toko', akun.akun.nama_toko);
   body.append('alamat', akun.akun.alamat);
   body.append('no_telp', akun.akun.no_telp);
-  body.append('foto', akun.akun.foto);
+  body.append('foto', "0650226e08b5daf2ebb83ad329b23373.png");
   console.log(body)
   const response = await fetch('https://simanis.stei.itb.ac.id/fodex/akun', {
     method: 'PUT',

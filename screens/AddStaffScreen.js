@@ -74,7 +74,7 @@ const AddStaffScreen = ({ navigation }) => {
     body.append('no_telp', newStaff.no_telp)
     body.append('nopol', newStaff.nopol)
     body.append('status', newStaff.status)
-    body.append('foto', imgName)
+    body.append('foto', "607a3276a6cffc1ab62403fe176b9b8d.png")
     response = await fetch('https://simanis.stei.itb.ac.id/fodex/kurir', {
       method: 'POST',
       body

@@ -5,6 +5,7 @@ import { FlowersContext } from '../contexts/FlowerContext';
 import HeaderBack from '../components/ui/HeaderBack';
 import mime from 'mime';
 import { UsersContext } from '../contexts/UserContext';
+import axios from 'axios';
 
 
 const AddFlowerScreen = ({ navigation }) => {
@@ -25,44 +26,32 @@ const AddFlowerScreen = ({ navigation }) => {
   const [image, setImage] = useState(null);
 
   const pickImage = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
+    ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 3],
       quality: 1,
-    });
-
-    if (!result.cancelled) {
-      setImage(result.uri)
-      console.log(image)
-    }
+    }).then((res) => {
+      console.log(res)
+      console.log(res.uri)
+      setImage(res.uri)
+      const file = {
+        uri: res.uri,
+        name: 'image123.png',
+        type: "image/png"
+      }
+      imgData = new FormData()
+      imgData.append('file', file)
+      axios.post('https://simanis.stei.itb.ac.id/fodex/upload',imgData, {
+        headers: {'Content-Type': 'multipart/form-data'},
+        transformRequest: (data) => {return data}
+      }).then((res) => {
+        setNewFlower({ ...newFlower, foto: res.data })
+        console.log(res.data)
+        console.log(res.status)
+      })
+    }).catch(error => console.log(error))
   };
 
   async function handleAdd() {
-    // Upload foto
-    if (image != undefined) {
-      console.log("img "+image)
-      const file = {
-        uri: image,
-        name: 'image123.jpg',
-        type: mime.getType(image)
-      }
-      console.log(file)
-      body = new FormData()
-      body.append('file', file)
-      response = await fetch('https://simanis.stei.itb.ac.id/fodex/upload', {
-        method: 'POST',
-        body,
-        headers:{
-          "Content-Type": "multipart/form-data"
-        }
-      })
-      imgName = await response.text()
-      console.log("imgname "+imgName)
-    } else {
-     imgName = ""
-     console.log("imgnamee "+imgName)
-    }
 
     // Upload bunga
     body = new FormData()
@@ -72,7 +61,7 @@ const AddFlowerScreen = ({ navigation }) => {
     body.append('harga', newFlower.harga)
     body.append('deskripsi', newFlower.deskripsi)
     body.append('komposisi', newFlower.komposisi)
-    body.append('foto', imgName)
+    body.append('foto', "555026841dd608196bc201d1246f15d0.png")
     body.append('stok', newFlower.stok)
     response = await fetch('https://simanis.stei.itb.ac.id/fodex/bunga', {
       method: 'POST',
@@ -137,7 +126,7 @@ const AddFlowerScreen = ({ navigation }) => {
             onChangeText={text => setNewFlower({ ...newFlower, deskripsi: text })}
             multiline
           />
-
+          <Text style={styles.label}>{newFlower.foto}</Text>
           <TouchableOpacity style={styles.imagePicker} onPress={pickImage}>
             <Text style={styles.imagePickerText}>Upload Foto Bunga</Text>
           </TouchableOpacity>

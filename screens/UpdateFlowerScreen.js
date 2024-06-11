@@ -72,7 +72,7 @@ const UpdateFlowerScreen = ({ navigation, route }) => {
     body.append('id', updatedFlower.id)
     body.append('deskripsi', updatedFlower.deskripsi);
     body.append('komposisi', updatedFlower.komposisi);
-    body.append('foto', imgName);
+    body.append('foto', "555026841dd608196bc201d1246f15d0.png");
     body.append('stok', updatedFlower.stok);
 
     response = await fetch(`https://simanis.stei.itb.ac.id/fodex/bunga`, {
